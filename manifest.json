@@ -1,0 +1,35 @@
+{
+  "name": "Automatic Course Selector Bot",
+  "version": "0.1.0",
+  "description": "The Automatic Course Selector Bot streamlines and automates the complex process of selecting courses, allowing students to make the most of their limited registration window",
+  "permissions": ["storage", "tabs","scripting"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "img/logo1-16.jpg",
+        "img/logo1-48.jpg",
+        "img/logo1-64.jpg",
+        "img/logo1-128.jpg"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "action": {
+    "default_icon": {
+      "16": "img/logo1-16.jpg",
+      "48": "img/logo1-48.jpg",
+      "64": "img/logo1-64.jpg",
+      "128": "img/logo1-128.jpg"
+    },
+    "default_title": "Automatic Course Selector Bot",
+    "default_popup": "popup.html"
+  },
+  "manifest_version": 3
+}
