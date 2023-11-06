@@ -1,12 +1,75 @@
-async function getActiveTabURL() {
-  const tabs = await chrome.tabs.query({
-      currentWindow: true,
-      active: true
-  });
+// here code starts that will execute on the browser
+function selectMyCourse(courseList){
 
-  return tabs[0];
+  const days = parseInt(document.querySelector('.days').textContent);
+  const hours = parseInt(document.querySelector('.hours').textContent);
+  const minutes = parseInt(document.querySelector('.minutes').textContent);
+  const seconds = parseInt(document.querySelector('.seconds').textContent);
+  var timeLimit = 1;
+  if(days > 0){
+    timeLimit += 86400*days;
+  }
+  if(hours > 0){
+    timeLimit += 3600*hours;
+  }
+  if(minutes > 0){
+    timeLimit += 60*minutes;
+  }
+  if(seconds > 0){
+    timeLimit += seconds;
+  }
+  // const courseList = ["ACT141.24","ACT141.26","CSE161.3"]
+  var umsHeader = document.querySelector(".fuse-alert-container");
+  // console.log(umsHeader);
+  umsHeader.innerHTML = "";
+  console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
+
+  function main(){
+    //const courseText = "ACT141.24"; // The text associated with the checkbox
+    // Find all checkboxes
+    const checkboxes = document.querySelectorAll('mat-checkbox input[type="checkbox"]');
+    const checkboxesLength = checkboxes.length;
+    console.log(`main function running. array length ${checkboxesLength}`);
+    if(checkboxesLength>0){
+      for(const courseText of courseList){
+        for (const checkbox of checkboxes) {
+          const parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
+          // if(parentDiv){action.textContent= "True"}else{action.textContent= "False"}
+          if (parentDiv){
+            const tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
+            if(tooltipTriggerDiv){
+                const weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
+                if(weAreWatchingYouA){
+                    if(weAreWatchingYouA && weAreWatchingYouA.textContent.trim() === courseText.trim()){
+                        if(!checkbox.checked){
+                            checkbox.checked = true;
+                            umsHeader.innerHTML += `<b style="color:green;">${courseText} </b>, `;
+                        }else{
+                            // checkbox.checked = false;
+                            umsHeader.innerHTML += `<b style="color:red;">${courseText} </b>, `;
+                        }
+                        break;
+                    }
+                }
+            }
+          }
+          
+        }
+      }
+    }else{
+      setTimeout(main,1000);
+    }
+  }
+  // main function end 
+  setTimeout(main,(timeLimit-3)*1000);
+  
 }
 
+
+// here code ends that will execute on the browser
+
+
+// here code starts that will execute on extension popup 
 var fieldsDiv = document.getElementById("input-fields");
       const courseList = [];
       const displayCourcesDiv = document.getElementById("course-container");
@@ -76,67 +139,6 @@ var fieldsDiv = document.getElementById("input-fields");
         }
       }
 
-      function selectMyCourse(courseList){
-        // const courseList = ["ACT141.24","ACT141.26","CSE161.3"]
-        const days = parseInt(document.querySelector('.days'));
-        const hours = parseInt(document.querySelector('.hours'));
-        const minutes = parseInt(document.querySelector('.minutes'));
-        const seconds = parseInt(document.querySelector('.seconds'));
-        const timeLimit = 2;
-        if(days > 0){
-          timeLimit += 86400*days;
-        }
-        if(hours > 0){
-          timeLimit += 3600*hours;
-        }
-        if(minutes > 0){
-          timeLimit += 60*minutes;
-        }
-        if(seconds > 0){
-          timeLimit += seconds;
-        }
-
-        var umsHeader = document.querySelector(".fuse-alert-container");
-        // console.log(umsHeader);
-        umsHeader.innerHTML = "";
-        // console.log(courseList);
-        function main(){
-          for(const courseText of courseList){
-            //const courseText = "ACT141.24"; // The text associated with the checkbox
-            // Find all checkboxes
-            const checkboxes = document.querySelectorAll('mat-checkbox input[type="checkbox"]');
-            // var dispCources = document.getElementById(courseText);
-            // var action = document.querySelector("#action");
-            for (const checkbox of checkboxes) {
-              const parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
-              // if(parentDiv){action.textContent= "True"}else{action.textContent= "False"}
-              if (parentDiv){
-                const tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
-                if(tooltipTriggerDiv){
-                    const weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
-                    if(weAreWatchingYouA){
-                        if(weAreWatchingYouA && weAreWatchingYouA.textContent.trim() === courseText.trim()){
-                            if(!checkbox.checked){
-                                checkbox.checked = true;
-                                umsHeader.innerHTML += `<b style="color:green;">${courseText} </b>, `;
-                                selectedCourses++;
-                            }else{
-                                // checkbox.checked = false;
-                                umsHeader.innerHTML += `<b style="color:red;">${courseText} </b>, `;
-                            }
-                            break;
-                        }
-                    }
-                }
-              }
-              
-            }
-          }
-        }
-        // main function end 
-        setTimeout(main,timeLimit*1000);
-      }
-
 
     document.addEventListener("DOMContentLoaded", function () {
       // Wait for the document to be fully loaded
@@ -168,4 +170,4 @@ var fieldsDiv = document.getElementById("input-fields");
     });
 
 
-    
+// here code ends that will execute on extension popup 
