@@ -1,23 +1,28 @@
 // here code starts that will execute on the browser
 function selectMyCourse(courseList){
 
-  const days = parseInt(document.querySelector('.days').textContent);
-  const hours = parseInt(document.querySelector('.hours').textContent);
-  const minutes = parseInt(document.querySelector('.minutes').textContent);
-  const seconds = parseInt(document.querySelector('.seconds').textContent);
   var timeLimit = 1;
-  if(days > 0){
-    timeLimit += 86400*days;
+  try{
+    const days = parseInt(document.querySelector('.days').textContent);
+    const hours = parseInt(document.querySelector('.hours').textContent);
+    const minutes = parseInt(document.querySelector('.minutes').textContent);
+    const seconds = parseInt(document.querySelector('.seconds').textContent);
+    if(days > 0){
+      timeLimit += 86400*days;
+    }
+    if(hours > 0){
+      timeLimit += 3600*hours;
+    }
+    if(minutes > 0){
+      timeLimit += 60*minutes;
+    }
+    if(seconds > 0){
+      timeLimit += seconds;
+    }
+  }catch (e) {
+    console.log(e);
   }
-  if(hours > 0){
-    timeLimit += 3600*hours;
-  }
-  if(minutes > 0){
-    timeLimit += 60*minutes;
-  }
-  if(seconds > 0){
-    timeLimit += seconds;
-  }
+  
   // const courseList = ["ACT141.24","ACT141.26","CSE161.3"]
   var umsHeader = document.querySelector(".fuse-alert-container");
   // console.log(umsHeader);
@@ -36,22 +41,24 @@ function selectMyCourse(courseList){
           const parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
           // if(parentDiv){action.textContent= "True"}else{action.textContent= "False"}
           if (parentDiv){
+            const seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden.ng-tns-c349-29');
+            const seatLimit = seatLimitElement.textContent.trim().split("/");
             const tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
             if(tooltipTriggerDiv){
                 const weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
                 if(weAreWatchingYouA){
                     if(weAreWatchingYouA && weAreWatchingYouA.textContent.trim() === courseText.trim()){
+                      if(parseInt(seatLimit[0])< parseInt(seatLimit[1])){
                         if(!checkbox.checked){
                             checkbox.checked = true;
                             umsHeader.innerHTML += `<b style="color:green;">${courseText} </b>, `;
-                        }else{
-                            // checkbox.checked = false;
-                            umsHeader.innerHTML += `<b style="color:red;">${courseText} </b>, `;
-                        }
+                        }else{umsHeader.innerHTML += `<b style="color:yellow;">Already selected: ${courseText} </b>, `;}
                         break;
-                    }
+                     }else{umsHeader.innerHTML += `<b style="color:red;">No seat: ${courseText} </b>, `;}
+                   }
                 }
             }
+            
           }
           
         }
@@ -61,7 +68,7 @@ function selectMyCourse(courseList){
     }
   }
   // main function end 
-  setTimeout(main,(timeLimit-3)*1000);
+  setTimeout(main,(timeLimit)*1000);
   
 }
 
@@ -149,7 +156,34 @@ var fieldsDiv = document.getElementById("input-fields");
       const courseContainer = document.getElementById("course-container") 
       // Find the "select-courses-btn" button by its ID
       const selectcourseBtn = document.getElementById("select-courses-btn")
+      // Find the "select-btn" button by its ID
+      const selectBtn = document.getElementById("select-btn")
+      // Find the "select-btn" button by its ID
+      const swapBtn = document.getElementById("swap-btn")
+      // Find the "select-courses-btn" button by its ID
+      const selectcourseContainer = document.getElementById("select-courses-container");
+      // Find the "select-courses-btn" button by its ID
+      const swapcourseContainer = document.getElementById("swap-courses-container");
 
+      selectBtn.addEventListener("click",function(){
+        selectcourseContainer.style.display = "block";
+        swapcourseContainer.style.display = "none";
+
+        swapBtn.classList.remove("bg-sky-400");
+        selectBtn.classList.add("bg-sky-400");
+        swapBtn.classList.add("bg-sky-200");
+        selectBtn.classList.remove("bg-sky-200");
+      })
+
+      swapBtn.addEventListener("click",function(){
+        swapcourseContainer.style.display = "block";
+        selectcourseContainer.style.display = "none";
+
+        selectBtn.classList.remove("bg-sky-400");
+        swapBtn.classList.add("bg-sky-400");
+        selectBtn.classList.add("bg-sky-200");
+        swapBtn.classList.remove("bg-sky-200");
+      })
       // Add a click event listener to the button
       addFieldBtn.addEventListener("click", addField);
       // Add a click event listener to the button
