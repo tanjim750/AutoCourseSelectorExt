@@ -77,6 +77,8 @@ function selectMyCourse(courseList){
 
 
 // here code starts that will execute on extension popup 
+
+// select courses script start here
 var fieldsDiv = document.getElementById("input-fields");
       const courseList = [];
       const displayCourcesDiv = document.getElementById("course-container");
@@ -145,15 +147,108 @@ var fieldsDiv = document.getElementById("input-fields");
           displayCources() // Trigger this function to display the courses
         }
       }
+      
+// script ended here 
 
+// swap courses script starts here 
+var swapfieldsDiv = document.getElementById("swap-input-fields");
+      const swapCourseList = [];
+      const selectedCourseList = [];
+      const swapdisplayCoursesDiv = document.getElementById("swap-display-container");
+    
+      function addSwapValue() {
+        var selectedCourse = document.getElementById("selected-cource").value;
+        var swapCourse = document.getElementById("swap-course").value;
+        var is_exists = swapCourseList.includes(selectedCourse) // check the course exist or not in the list
+        if ((!is_exists) && (swapCourse != selectedCourse) && (selectedCourse != "") && (swapCourse != "")) {
+          console.log("addSwapValue");
+            swapCourseList.push(swapCourse); 
+            selectedCourseList.push(selectedCourse); 
+            console.log(selectedCourseList);
+            console.log(swapCourseList); 
+            displaySwapCources() // Trigger this function to display the courses
+            return true;
+        }else{return false;}
+      }
+
+      function addSwapField() {
+        var added = addSwapValue() // Trigger this function to add the courses to the list
+        
+        if(added){
+          const fieldHtml = `
+            <div class="relative m-2 rounded-md shadow-sm">  <!-- single course input fields -->
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 mr-10">
+              <span class="text-gray-500 sm:text-sm ">Selected Course |</span>
+            </div>
+            <input type="text" name="price" id="selected-cource" class="block w-full rounded-md border-0 py-1.5 pl-[110px] pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Cse181.1">
+          </div>
+          <div class="relative m-2 rounded-md shadow-sm">  <!-- single course input fields -->
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 mr-10">
+              <span class="text-gray-500 sm:text-sm ">Swap Course |</span>
+            </div>
+            <input type="text" name="price" id="swap-course" class="block w-full rounded-md border-0 py-1.5 pl-[110px] pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Cse181.2">
+          </div>
+        `;
+        swapfieldsDiv.innerHTML = fieldHtml;
+        }
+      }
+  
+      function displaySwapCources(){
+        const listLength = swapCourseList.length;
+        swapdisplayCoursesDiv.innerHTML = "";
+        console.log(listLength);
+        if (listLength != 0) {
+            for (var i = 0; i < listLength; i++) {
+                var selectedCourceText = selectedCourseList[i];
+                var swapCourceText = swapCourseList[i];
+                var courseHtml = `
+                <button class="ml-1 bg-slate-300 hover:bg-slate-400 focus:bg-slate-500 text-slate-700 py-1 px-2 rounded-full transition duration-300 ease-in-out">
+                    ${selectedCourceText}<i class="fa fa-exchange px-2" style='color:green;'></i> ${swapCourceText}
+                    <i id="${swapCourceText}" class="fa fa-close px-2 rmv-swap-course" style='color:red;'>
+                        <span style='display:none'>${i}</span>
+                    </i>
+                </button>
+                `;
+                
+                swapdisplayCoursesDiv.innerHTML += courseHtml;
+                
+            }
+        }else{
+            var courseHtml = `
+                <span class="bg-slate-300 hover:bg-slate-500 font-semibold focus:bg-slate-600 text-slate-700 py-1 px-2 rounded-full transition duration-300 ease-in-out">
+                  No Selected cources
+                </span>
+                `;
+                
+            displayCourcesDiv.innerHTML += courseHtml;
+        }
+      }
+
+      function removeSwapCourse(event){
+        var target = event.target;
+        if (target.classList.contains("rmv-swap-course")) {
+          // Find the <span> element within the <i> element
+          var spanElement = target.querySelector('span');
+
+          var listIndex = parseInt(spanElement.textContent);
+          swapCourseList.splice(listIndex, 1);
+          selectedCourseList.splice(listIndex, 1);
+          displaySwapCources() // Trigger this function to display the courses
+        }
+      }
+// script ended here 
 
     document.addEventListener("DOMContentLoaded", function () {
       // Wait for the document to be fully loaded
 
       // Find the "Add Next" button by its ID
-      const addFieldBtn = document.getElementById("add-field-btn");
+      const addFieldBtn = document.getElementById("add-field-btn"); 
+      // Find the "Add Next" button by its ID
+      const addSwapFieldBtn = document.getElementById("add-swap-field-btn");
       // Find the course container by its ID
       const courseContainer = document.getElementById("course-container") 
+      // Find the course container by its ID
+      const swapDisplayContainer = document.getElementById("swap-display-container") 
       // Find the "select-courses-btn" button by its ID
       const selectcourseBtn = document.getElementById("select-courses-btn")
       // Find the "select-btn" button by its ID
@@ -186,8 +281,10 @@ var fieldsDiv = document.getElementById("input-fields");
       })
       // Add a click event listener to the button
       addFieldBtn.addEventListener("click", addField);
+      addSwapFieldBtn.addEventListener("click", addSwapField);
       // Add a click event listener to the button
       courseContainer.addEventListener("click", removeCourse);
+      swapDisplayContainer.addEventListener("click", removeSwapCourse);
       // Add a click event listener to the button
       selectcourseBtn.addEventListener('click', async () => {
         let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -202,6 +299,5 @@ var fieldsDiv = document.getElementById("input-fields");
       });
 
     });
-
 
 // here code ends that will execute on extension popup 
