@@ -27,7 +27,8 @@ function selectMyCourse(courseList){
   // const courseList = ["ACT141.24","ACT141.26","CSE161.3"]
   var umsHeader = document.querySelector(".fuse-alert-container");
   // console.log(umsHeader);
-  umsHeader.innerHTML = "";
+  if(umsHeader){umsHeader.innerHTML = "";}
+  
   console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
 
   function main(){
@@ -42,8 +43,11 @@ function selectMyCourse(courseList){
           const parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
           // if(parentDiv){action.textContent= "True"}else{action.textContent= "False"}
           if (parentDiv){
-            const seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden.ng-tns-c349-29');
-            const seatLimit = seatLimitElement.textContent.trim().split("/");
+            const seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden');
+            var seatLimit = null;
+            if(seatLimitElement){
+               seatLimit = seatLimitElement.textContent.trim().split("/");
+            }else{ seatLimit = [20,23];}
             const tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
             if(tooltipTriggerDiv){
                 const weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
@@ -52,10 +56,14 @@ function selectMyCourse(courseList){
                       if(parseInt(seatLimit[0])< parseInt(seatLimit[1])){
                         if(!checkbox.checked){
                             checkbox.checked = true;
-                            umsHeader.innerHTML += `<b style="color:green;">${courseText} </b>, `;
-                        }else{umsHeader.innerHTML += `<b style="color:yellow;">Already selected: ${courseText} </b>, `;}
+                            if(umsHeader){umsHeader.innerHTML = `<b style="color:green;">${courseText} </b>, `;}else{console.log("Course aded: "+courseText)}
+                        }else{//umsHeader.innerHTML += `<b style="color:yellow;">Already selected: ${courseText} </b>, `;
+                          if(umsHeader){umsHeader.innerHTML = `<b style="color:yellow;">Already selected: ${courseText} </b>, `;}else{console.log("Already selected: "+courseText)}
+                        }
                         break;
-                     }else{umsHeader.innerHTML += `<b style="color:red;">No seat: ${courseText} </b>, `;}
+                     }else{//umsHeader.innerHTML += `<b style="color:red;">No seat: ${courseText} </b>, `;
+                      if(umsHeader){umsHeader.innerHTML = `<b style="color:yellow;">No seat: ${courseText} </b>, `;}else{console.log("No seat: "+courseText)}
+                    }
                    }
                 }
             }
@@ -101,7 +109,7 @@ function swapMyCourse(selectedCourseList,swapCourseList){
   // const selectedCourseList = ["ACT141.24","ACT141.26","CSE161.3"]
   var umsHeader = document.querySelector(".fuse-alert-container");
   // console.log(umsHeader);
-  umsHeader.innerHTML = "";
+  if(umsHeader){umsHeader.innerHTML = "";}
   console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
 
   function main(){
@@ -121,8 +129,13 @@ function swapMyCourse(selectedCourseList,swapCourseList){
           const parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
           // if(parentDiv){action.textContent= "True"}else{action.textContent= "False"}
           if (parentDiv){
-            const seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden.ng-tns-c349-29');
-            const seatLimit = seatLimitElement.textContent.trim().split("/");
+            const seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden'); 
+            // console.log("seatLimitElement");
+            // console.log(seatLimitElement);
+            var seatLimit = null;
+            if(seatLimitElement){
+               seatLimit = seatLimitElement.textContent.trim().split("/");
+            }else{ seatLimit = [20,23];}
             const tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
             if(tooltipTriggerDiv){
                 const weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
@@ -135,15 +148,20 @@ function swapMyCourse(selectedCourseList,swapCourseList){
                           if(!swapCourseCheckbox.checked){
                             selectedCourseCheckbox.checked = false;
                             swapCourseCheckbox.checked = true;
-                            umsHeader.innerHTML += `<b style="color:green;">${swapCourseText} </b>, `;
+                            // umsHeader.innerHTML += `<b style="color:green;">${swapCourseText} </b>, `;
+                            if(umsHeader){umsHeader.innerHTML = `<b style="color:green;">${swapCourseText} </b>, `;}else{console.log("Course aded: "+swapCourseText)}
                             
                           }else{
-                            umsHeader.innerHTML += `<b style="color:yellow;">Already selected: ${swapCourseText} </b>, `;
+                            // umsHeader.innerHTML += `<b style="color:yellow;">Already selected: ${swapCourseText} </b>, `;
+                            if(umsHeader){umsHeader.innerHTML = `<b style="color:yellow;">Already selected: ${swapCourseText} </b>, `;}else{console.log("Already selected: "+swapCourseText)}
                           }
                           break;
                         }
                         
-                      }else{umsHeader.innerHTML += `<b style="color:red;">No seat: ${swapCourseText} </b>, `;}
+                      }else{
+                        // umsHeader.innerHTML += `<b style="color:red;">No seat: ${swapCourseText} </b>, `;
+                        if(umsHeader){umsHeader.innerHTML = `<b style="color:red;">No seat: ${swapCourseText} </b>, `;}else{console.log("No seat: "+swapCourseText)}
+                    }
                     }
                     else if(weAreWatchingYouA.textContent.trim() === selectedCourseText.trim()){
                       selectedCourseCheckbox = checkbox;
@@ -154,7 +172,7 @@ function swapMyCourse(selectedCourseList,swapCourseList){
                           umsHeader.innerHTML += `<b style="color:green;">${swapCourseText} </b>, `;
 
                         }else{
-                          umsHeader.innerHTML += `<b style="color: rgb(239 68 68);">Can't swap: ${swapCourseText} </b>, `;
+                          // umsHeader.innerHTML += `<b style="color: rgb(239 68 68);">Can't swap: ${swapCourseText} </b>, `;
                         }
                         break;
                       }
