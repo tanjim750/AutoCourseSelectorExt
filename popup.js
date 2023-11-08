@@ -260,8 +260,7 @@ var fieldsDiv = document.getElementById("input-fields");
           courseList.splice(listIndex, 1);
           displayCources() // Trigger this function to display the courses
         }
-      }
-      
+      }    
 // script ended here 
 
 // swap courses script starts here 
@@ -439,5 +438,4 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
       });
 
     });
-
 // here code ends that will execute on extension popup 
