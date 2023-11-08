@@ -1,4 +1,5 @@
 // here code starts that will execute on the browser
+// select courses script start here
 function selectMyCourse(courseList){
 
   var timeLimit = 1;
@@ -71,41 +72,154 @@ function selectMyCourse(courseList){
   setTimeout(main,(timeLimit)*1000);
   
 }
+// code ended here
+// swap courses script starts here 
+function swapMyCourse(selectedCourseList,swapCourseList){
 
+  var timeLimit = 0;
+  try{
+    const days = parseInt(document.querySelector('.days').textContent);
+    const hours = parseInt(document.querySelector('.hours').textContent);
+    const minutes = parseInt(document.querySelector('.minutes').textContent);
+    const seconds = parseInt(document.querySelector('.seconds').textContent);
+    if(days > 0){
+      timeLimit += 86400*days;
+    }
+    if(hours > 0){
+      timeLimit += 3600*hours;
+    }
+    if(minutes > 0){
+      timeLimit += 60*minutes;
+    }
+    if(seconds > 0){
+      timeLimit += seconds;
+    }
+  }catch (e) {
+    console.log(e);
+  }
+  
+  // const selectedCourseList = ["ACT141.24","ACT141.26","CSE161.3"]
+  var umsHeader = document.querySelector(".fuse-alert-container");
+  // console.log(umsHeader);
+  umsHeader.innerHTML = "";
+  console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
 
+  function main(){
+    //const courseText = "ACT141.24"; // The text associated with the checkbox
+    // Find all checkboxes
+    const checkboxes = document.querySelectorAll('mat-checkbox input[type="checkbox"]');
+    const checkboxesLength = checkboxes.length;
+    var selectedCourseCheckbox = null;
+    var swapCourseCheckbox = null;
+    console.log(`main function running. array length ${checkboxesLength}`);
+    if(checkboxesLength>0){
+      for(var i=0; i<swapCourseList.length; i++){
+        const swapCourseText = swapCourseList[i];
+        const selectedCourseText = selectedCourseList[i];
+        var swapCourseSeatAbailable = false;
+        for (const checkbox of checkboxes) {
+          const parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
+          // if(parentDiv){action.textContent= "True"}else{action.textContent= "False"}
+          if (parentDiv){
+            const seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden.ng-tns-c349-29');
+            const seatLimit = seatLimitElement.textContent.trim().split("/");
+            const tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
+            if(tooltipTriggerDiv){
+                const weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
+                if(weAreWatchingYouA){
+                    if(weAreWatchingYouA.textContent.trim() === swapCourseText.trim()){
+                      if(parseInt(seatLimit[0])< parseInt(seatLimit[1])){
+                        swapCourseCheckbox = checkbox;
+                        swapCourseSeatAbailable = true;
+                        if(selectedCourseCheckbox && swapCourseSeatAbailable){
+                          if(!swapCourseCheckbox.checked){
+                            selectedCourseCheckbox.checked = false;
+                            swapCourseCheckbox.checked = true;
+                            umsHeader.innerHTML += `<b style="color:green;">${swapCourseText} </b>, `;
+                            
+                          }else{
+                            umsHeader.innerHTML += `<b style="color:yellow;">Already selected: ${swapCourseText} </b>, `;
+                          }
+                          break;
+                        }
+                        
+                      }else{umsHeader.innerHTML += `<b style="color:red;">No seat: ${swapCourseText} </b>, `;}
+                    }
+                    else if(weAreWatchingYouA.textContent.trim() === selectedCourseText.trim()){
+                      selectedCourseCheckbox = checkbox;
+                      if(swapCourseCheckbox && swapCourseSeatAbailable){
+                        if(selectedCourseCheckbox.checked){
+                          selectedCourseCheckbox.checked = false;
+                          swapCourseCheckbox.checked = true;
+                          umsHeader.innerHTML += `<b style="color:green;">${swapCourseText} </b>, `;
+
+                        }else{
+                          umsHeader.innerHTML += `<b style="color: rgb(239 68 68);">Can't swap: ${swapCourseText} </b>, `;
+                        }
+                        break;
+                      }
+                     }
+                 }
+            }
+            
+          }
+          
+        }
+      }
+    }else{
+      setTimeout(main,1000);
+    }
+  }
+  // main function end 
+  setTimeout(main,(timeLimit)*1000);
+  
+}
+// code ended here 
 // here code ends that will execute on the browser
 
+// #################################################################################################################################
 
 // here code starts that will execute on extension popup 
-
 // select courses script start here
 var fieldsDiv = document.getElementById("input-fields");
       const courseList = [];
       const displayCourcesDiv = document.getElementById("course-container");
-    
+      const selectInputWarnings = document.getElementById("select-input-warnings");
+
       function addValue() {
         var courceInp = document.getElementById("courceInp");
         var value = courceInp.value;
         var is_exists = courseList.includes(value) // check the course exist or not in the list
-        if (value != "" && !is_exists) {
+        if (!is_exists) {
+          if(value != ""){
             courseList.push(value);
             displayCources() // Trigger this function to display the courses
+            selectInputWarnings.textContent = "";
+            return true;
+          }else{
+            selectInputWarnings.textContent = "Input field can't be empty";
+          }
+        }else{
+          selectInputWarnings.textContent = "Course already added";
         }
+        return false;
       }
 
       function addField() {
-        addValue() // Trigger this function to add the courses to the list
+        const added = addValue() // Trigger this function to add the courses to the list
         
-        const fieldHtml = `
-          <div class='relative m-2 rounded-md shadow-sm'>
-            <!-- single course input fields -->
-            <div class='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 mr-10'>
-              <span class='text-gray-500 sm:text-sm '>Course Code |</span>
+        if(added){
+          const fieldHtml = `
+            <div class='relative m-2 rounded-md shadow-sm'>
+              <!-- single course input fields -->
+              <div class='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 mr-10'>
+                <span class='text-gray-500 sm:text-sm '>Course Code |</span>
+              </div>
+              <input type='text' name='price' id='courceInp' class='block w-full rounded-md border-0 py-1.5 pl-[110px] pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6' placeholder='Cse181.1'>
             </div>
-            <input type='text' name='price' id='courceInp' class='block w-full rounded-md border-0 py-1.5 pl-[110px] pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6' placeholder='Cse181.1'>
-          </div>
-        `;
-        fieldsDiv.innerHTML = fieldHtml;
+          `;
+          fieldsDiv.innerHTML = fieldHtml;
+        }
       }
   
       function displayCources(){
@@ -155,20 +269,31 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
       const swapCourseList = [];
       const selectedCourseList = [];
       const swapdisplayCoursesDiv = document.getElementById("swap-display-container");
-    
+      var swapInputWarnings = document.getElementById("swap-input-warnings");
+
       function addSwapValue() {
         var selectedCourse = document.getElementById("selected-cource").value;
         var swapCourse = document.getElementById("swap-course").value;
-        var is_exists = swapCourseList.includes(selectedCourse) // check the course exist or not in the list
-        if ((!is_exists) && (swapCourse != selectedCourse) && (selectedCourse != "") && (swapCourse != "")) {
-          console.log("addSwapValue");
+        var isSelectedCourseExists = selectedCourseList.includes(selectedCourse) // check the course exist or not in the list
+        var isSwapCourseExists = swapCourseList.includes(swapCourse) // check the course exist or not in the list
+        console.log(isSelectedCourseExists);
+        console.log(isSwapCourseExists);
+        if ((swapCourse != selectedCourse) && (selectedCourse != "") && (swapCourse != "")) {
+          if(!isSelectedCourseExists || !isSwapCourseExists){
             swapCourseList.push(swapCourse); 
             selectedCourseList.push(selectedCourse); 
             console.log(selectedCourseList);
             console.log(swapCourseList); 
             displaySwapCources() // Trigger this function to display the courses
+            swapInputWarnings.textContent = ""
             return true;
-        }else{return false;}
+          }else{
+            swapInputWarnings.textContent = "warnings: Already Added";
+          }
+        }else{
+          swapInputWarnings.textContent = "warnings: Blank input or slected courses and swap courses are same";
+        }
+        return false;
       }
 
       function addSwapField() {
@@ -251,6 +376,7 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
       const swapDisplayContainer = document.getElementById("swap-display-container") 
       // Find the "select-courses-btn" button by its ID
       const selectcourseBtn = document.getElementById("select-courses-btn")
+      const swapCourceBtn = document.getElementById("swap-courses-btn");
       // Find the "select-btn" button by its ID
       const selectBtn = document.getElementById("select-btn")
       // Find the "select-btn" button by its ID
@@ -285,7 +411,8 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
       // Add a click event listener to the button
       courseContainer.addEventListener("click", removeCourse);
       swapDisplayContainer.addEventListener("click", removeSwapCourse);
-      // Add a click event listener to the button
+
+      // Add a click event listener to the button for select courses
       selectcourseBtn.addEventListener('click', async () => {
         let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
@@ -294,6 +421,19 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
                 target: { tabId: tab.id },
                 function: selectMyCourse,
                 args: [courseList],
+            },
+        );
+      });
+
+      // Add a click event listener to the button for swap courses
+      swapCourceBtn.addEventListener('click', async () => {
+        let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+        chrome.scripting.executeScript(
+            {
+                target: { tabId: tab.id },
+                function: swapMyCourse,
+                args: [selectedCourseList,swapCourseList],
             },
         );
       });
