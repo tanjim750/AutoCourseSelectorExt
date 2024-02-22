@@ -1,217 +1,41 @@
-// here code starts that will execute on the browser
-// select courses script start here
-function selectMyCourse(courseList){
+let accessView = document.querySelector('div.has-access');
+let noAccessView = document.querySelector('div.has-not-access');
 
-  var timeLimit = 1;
-  try{
-    const days = parseInt(document.querySelector('.days').textContent);
-    const hours = parseInt(document.querySelector('.hours').textContent);
-    const minutes = parseInt(document.querySelector('.minutes').textContent);
-    const seconds = parseInt(document.querySelector('.seconds').textContent);
-    if(days > 0){
-      timeLimit += 86400*days;
+chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  let activeTab = tabs[0];
+  chrome.tabs.sendMessage(activeTab.id, { action: 'access' },(response) => {
+    if (response.hasAccess) {
+      accessView.style.display = 'block';
+      noAccessView.style.display = 'none';
     }
-    if(hours > 0){
-      timeLimit += 3600*hours;
-    }
-    if(minutes > 0){
-      timeLimit += 60*minutes;
-    }
-    if(seconds > 0){
-      timeLimit += seconds;
-    }
-  }catch (e) {
-    console.log(e);
-  }
-  
-  // const courseList = ["ACT141.24","ACT141.26","CSE161.3"]
-  var umsHeader = document.querySelector(".fuse-alert-container");
-  // console.log(umsHeader);
-  if(umsHeader){umsHeader.innerHTML = "";}
-  
-  console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
+  });
+});
 
-  function main(){
-    //const courseText = "ACT141.24"; // The text associated with the checkbox
-    // Find all checkboxes
-    const checkboxes = document.querySelectorAll('mat-checkbox input[type="checkbox"]');
-    const checkboxesLength = checkboxes.length;
-    console.log(`main function running. array length ${checkboxesLength}`);
-    if(checkboxesLength>0){
-      for(const courseText of courseList){
-        for (const checkbox of checkboxes) {
-          const parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
-          // if(parentDiv){action.textContent= "True"}else{action.textContent= "False"}
-          if (parentDiv){
-            const seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden');
-            var seatLimit = null;
-            if(seatLimitElement){
-               seatLimit = seatLimitElement.textContent.trim().split("/");
-            }else{ seatLimit = [20,23];}
-            const tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
-            if(tooltipTriggerDiv){
-                const weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
-                if(weAreWatchingYouA){
-                    if(weAreWatchingYouA && weAreWatchingYouA.textContent.trim() === courseText.trim()){
-                      if(parseInt(seatLimit[0])< parseInt(seatLimit[1])){
-                        if(!checkbox.checked){
-                            checkbox.checked = true;
-                            if(umsHeader){umsHeader.innerHTML = `<b style="color:green;">${courseText} </b>, `;}else{console.log("Course aded: "+courseText)}
-                        }else{//umsHeader.innerHTML += `<b style="color:yellow;">Already selected: ${courseText} </b>, `;
-                          if(umsHeader){umsHeader.innerHTML = `<b style="color:yellow;">Already selected: ${courseText} </b>, `;}else{console.log("Already selected: "+courseText)}
-                        }
-                        break;
-                     }else{//umsHeader.innerHTML += `<b style="color:red;">No seat: ${courseText} </b>, `;
-                      if(umsHeader){umsHeader.innerHTML = `<b style="color:yellow;">No seat: ${courseText} </b>, `;}else{console.log("No seat: "+courseText)}
-                    }
-                   }
-                }
-            }
-            
-          }
-          
-        }
-      }
-    }else{
-      setTimeout(main,1000);
-    }
-  }
-  // main function end 
-  setTimeout(main,(timeLimit)*1000);
-  
-}
-// code ended here
-// swap courses script starts here 
-function swapMyCourse(selectedCourseList,swapCourseList){
-
-  var timeLimit = 0;
-  try{
-    const days = parseInt(document.querySelector('.days').textContent);
-    const hours = parseInt(document.querySelector('.hours').textContent);
-    const minutes = parseInt(document.querySelector('.minutes').textContent);
-    const seconds = parseInt(document.querySelector('.seconds').textContent);
-    if(days > 0){
-      timeLimit += 86400*days;
-    }
-    if(hours > 0){
-      timeLimit += 3600*hours;
-    }
-    if(minutes > 0){
-      timeLimit += 60*minutes;
-    }
-    if(seconds > 0){
-      timeLimit += seconds;
-    }
-  }catch (e) {
-    console.log(e);
-  }
-  
-  // const selectedCourseList = ["ACT141.24","ACT141.26","CSE161.3"]
-  var umsHeader = document.querySelector(".fuse-alert-container");
-  // console.log(umsHeader);
-  if(umsHeader){umsHeader.innerHTML = "";}
-  console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
-
-  function main(){
-    //const courseText = "ACT141.24"; // The text associated with the checkbox
-    // Find all checkboxes
-    const checkboxes = document.querySelectorAll('mat-checkbox input[type="checkbox"]');
-    const checkboxesLength = checkboxes.length;
-    var selectedCourseCheckbox = null;
-    var swapCourseCheckbox = null;
-    console.log(`main function running. array length ${checkboxesLength}`);
-    if(checkboxesLength>0){
-      for(var i=0; i<swapCourseList.length; i++){
-        const swapCourseText = swapCourseList[i];
-        const selectedCourseText = selectedCourseList[i];
-        var swapCourseSeatAbailable = false;
-        for (const checkbox of checkboxes) {
-          const parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
-          // if(parentDiv){action.textContent= "True"}else{action.textContent= "False"}
-          if (parentDiv){
-            const seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden'); 
-            // console.log("seatLimitElement");
-            // console.log(seatLimitElement);
-            var seatLimit = null;
-            if(seatLimitElement){
-               seatLimit = seatLimitElement.textContent.trim().split("/");
-            }else{ seatLimit = [20,23];}
-            const tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
-            if(tooltipTriggerDiv){
-                const weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
-                if(weAreWatchingYouA){
-                    if(weAreWatchingYouA.textContent.trim() === swapCourseText.trim()){
-                      if(parseInt(seatLimit[0])< parseInt(seatLimit[1])){
-                        swapCourseCheckbox = checkbox;
-                        swapCourseSeatAbailable = true;
-                        if(selectedCourseCheckbox && swapCourseSeatAbailable){
-                          if(!swapCourseCheckbox.checked){
-                            selectedCourseCheckbox.checked = false;
-                            swapCourseCheckbox.checked = true;
-                            // umsHeader.innerHTML += `<b style="color:green;">${swapCourseText} </b>, `;
-                            if(umsHeader){umsHeader.innerHTML = `<b style="color:green;">${swapCourseText} </b>, `;}else{console.log("Course aded: "+swapCourseText)}
-                            
-                          }else{
-                            // umsHeader.innerHTML += `<b style="color:yellow;">Already selected: ${swapCourseText} </b>, `;
-                            if(umsHeader){umsHeader.innerHTML = `<b style="color:yellow;">Already selected: ${swapCourseText} </b>, `;}else{console.log("Already selected: "+swapCourseText)}
-                          }
-                          break;
-                        }
-                        
-                      }else{
-                        // umsHeader.innerHTML += `<b style="color:red;">No seat: ${swapCourseText} </b>, `;
-                        if(umsHeader){umsHeader.innerHTML = `<b style="color:red;">No seat: ${swapCourseText} </b>, `;}else{console.log("No seat: "+swapCourseText)}
-                    }
-                    }
-                    else if(weAreWatchingYouA.textContent.trim() === selectedCourseText.trim()){
-                      selectedCourseCheckbox = checkbox;
-                      if(swapCourseCheckbox && swapCourseSeatAbailable){
-                        if(selectedCourseCheckbox.checked){
-                          selectedCourseCheckbox.checked = false;
-                          swapCourseCheckbox.checked = true;
-                          umsHeader.innerHTML += `<b style="color:green;">${swapCourseText} </b>, `;
-
-                        }else{
-                          // umsHeader.innerHTML += `<b style="color: rgb(239 68 68);">Can't swap: ${swapCourseText} </b>, `;
-                        }
-                        break;
-                      }
-                     }
-                 }
-            }
-            
-          }
-          
-        }
-      }
-    }else{
-      setTimeout(main,1000);
-    }
-  }
-  // main function end 
-  setTimeout(main,(timeLimit)*1000);
-  
-}
-// code ended here 
-// here code ends that will execute on the browser
-
-// #################################################################################################################################
-
-// here code starts that will execute on extension popup 
-// select courses script start here
 var fieldsDiv = document.getElementById("input-fields");
       const courseList = [];
       const displayCourcesDiv = document.getElementById("course-container");
       const selectInputWarnings = document.getElementById("select-input-warnings");
 
+      chrome.storage.local.get("select-course", function (result){
+        const courseList_ = result['select-course'];
+        if (courseList_) {
+          for (let course of courseList_) {
+            courseList.push(course)
+          }
+          displayCources(courseList);
+        }
+      });
+
       function addValue() {
         var courceInp = document.getElementById("courceInp");
         var value = courceInp.value;
+        value = value.toUpperCase()
         var is_exists = courseList.includes(value) // check the course exist or not in the list
         if (!is_exists) {
           if(value != ""){
             courseList.push(value);
-            displayCources() // Trigger this function to display the courses
+            displayCources(courseList) // Trigger this function to display the courses
+            chrome.storage.local.set({ "select-course": courseList }); // save the selected course
             selectInputWarnings.textContent = "";
             return true;
           }else{
@@ -240,12 +64,12 @@ var fieldsDiv = document.getElementById("input-fields");
         }
       }
   
-      function displayCources(){
-        const listLength = courseList.length;
+      function displayCources(cources){
+        const listLength = cources.length;
         displayCourcesDiv.innerHTML = "";
         if (listLength != 0) {
             for (var i = 0; i < listLength; i++) {
-                var cource = courseList[i];
+                var cource = cources[i];
                 var courseHtml = `
                 <button class="ml-1 bg-slate-300 hover:bg-slate-400 focus:bg-slate-500 text-slate-700 py-1 px-2 rounded-full transition duration-300 ease-in-out">
                     ${cource}<i id="${cource}" class="fa fa-close px-2 rmv-course" style='color:red;'>
@@ -276,7 +100,8 @@ var fieldsDiv = document.getElementById("input-fields");
 
           var listIndex = parseInt(spanElement.textContent);
           courseList.splice(listIndex, 1);
-          displayCources() // Trigger this function to display the courses
+          displayCources(courseList) // Trigger this function to display the courses
+          chrome.storage.local.set({ "select-course": courseList }); // save the selected course
         }
       }    
 // script ended here 
@@ -287,6 +112,20 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
       const selectedCourseList = [];
       const swapdisplayCoursesDiv = document.getElementById("swap-display-container");
       var swapInputWarnings = document.getElementById("swap-input-warnings");
+
+      chrome.storage.local.get("swap-course", function (result) {
+        const swapCourse = result['swap-course'];
+        console.log(result);
+        if (swapCourse) {
+            let selectedCourse = swapCourse.selectedCourseList;
+            let swapCourses = swapCourse.swapCourseList;
+            for (let i = 0; i < selectedCourse.length; i++){
+              selectedCourseList.push(selectedCourse[i]);
+              swapCourseList.push(swapCourses[i]);
+            }
+            displaySwapCources(selectedCourseList,swapCourseList)
+        }
+      });
 
       function addSwapValue() {
         var selectedCourse = document.getElementById("selected-cource").value;
@@ -301,7 +140,8 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
             selectedCourseList.push(selectedCourse); 
             console.log(selectedCourseList);
             console.log(swapCourseList); 
-            displaySwapCources() // Trigger this function to display the courses
+            displaySwapCources(selectedCourseList,swapCourseList) // Trigger this function to display the courses
+            chrome.storage.local.set({ "swap-course": {'selectedCourseList':selectedCourseList,'swapCourseList':swapCourseList} }); // save selectedCourseList and swapCourseList
             swapInputWarnings.textContent = ""
             return true;
           }else{
@@ -335,14 +175,14 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
         }
       }
   
-      function displaySwapCources(){
+      function displaySwapCources(selectedCourse,swapCourse){
         const listLength = swapCourseList.length;
         swapdisplayCoursesDiv.innerHTML = "";
         console.log(listLength);
         if (listLength != 0) {
             for (var i = 0; i < listLength; i++) {
-                var selectedCourceText = selectedCourseList[i];
-                var swapCourceText = swapCourseList[i];
+                var selectedCourceText = selectedCourse[i];
+                var swapCourceText = swapCourse[i];
                 var courseHtml = `
                 <button class="ml-1 bg-slate-300 hover:bg-slate-400 focus:bg-slate-500 text-slate-700 py-1 px-2 rounded-full transition duration-300 ease-in-out">
                     ${selectedCourceText}<i class="fa fa-exchange px-2" style='color:green;'></i> ${swapCourceText}
@@ -362,7 +202,7 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
                 </span>
                 `;
                 
-            displayCourcesDiv.innerHTML += courseHtml;
+            swapdisplayCoursesDiv.innerHTML += courseHtml;
         }
       }
 
@@ -375,7 +215,8 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
           var listIndex = parseInt(spanElement.textContent);
           swapCourseList.splice(listIndex, 1);
           selectedCourseList.splice(listIndex, 1);
-          displaySwapCources() // Trigger this function to display the courses
+          displaySwapCources(selectedCourseList,swapCourseList) // Trigger this function to display the courses
+          chrome.storage.local.set({ "swap-course": {'selectedCourseList':selectedCourseList,'swapCourseList':swapCourseList} }); // save selectedCourseList and swapCourseList
         }
       }
 // script ended here 
@@ -430,30 +271,59 @@ var swapfieldsDiv = document.getElementById("swap-input-fields");
       swapDisplayContainer.addEventListener("click", removeSwapCourse);
 
       // Add a click event listener to the button for select courses
-      selectcourseBtn.addEventListener('click', async () => {
-        let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      // selectcourseBtn.addEventListener('click', async () => {
+      //   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
-        chrome.scripting.executeScript(
-            {
-                target: { tabId: tab.id },
-                function: selectMyCourse,
-                args: [courseList],
-            },
-        );
+      //   chrome.scripting.executeScript(
+      //       {
+      //           target: { tabId: tab.id },
+      //           function: selectMyCourse,
+      //           args: [courseList],
+      //       },
+      //   );
+      // });
+      selectcourseBtn.addEventListener('click', function (e) {
+        if(courseList.length > 0) {
+          chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            let activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, { action: 'select-course' });
+          });
+        }else{
+          selectInputWarnings.textContent = "No course available for select";
+          setTimeout(()=>{
+            selectInputWarnings.textContent = "";
+          },5000)
+        }
       });
 
       // Add a click event listener to the button for swap courses
-      swapCourceBtn.addEventListener('click', async () => {
-        let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      // swapCourceBtn.addEventListener('click', async () => {
+      //   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
-        chrome.scripting.executeScript(
-            {
-                target: { tabId: tab.id },
-                function: swapMyCourse,
-                args: [selectedCourseList,swapCourseList],
-            },
-        );
-      });
+      //   chrome.scripting.executeScript(
+      //       {
+      //           target: { tabId: tab.id },
+      //           function: swapMyCourse,
+      //           args: [selectedCourseList,swapCourseList],
+      //       },
+      //   );
+      // });
+      swapCourceBtn.addEventListener('click', function (e) {
+        if(swapCourseList.length > 0) {
+          chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            let activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, { action: 'swap-course' });
+          });
+        }else{
+          swapInputWarnings.textContent = "No course available for select";
+          setTimeout(()=>{
+            swapInputWarnings.textContent = "";
+          },5000)
+        }
+    });
+
+
+
+      
 
     });
-// here code ends that will execute on extension popup 

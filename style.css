@@ -844,3 +844,82 @@ video {
 .bg-sky-200{
   background-color: rgb(186 230 253);
 }
+
+.has-access{
+  display: none;
+}
+
+.has-not-access {
+  width: 300px;
+  overflow: hidden;
+  background: #333;
+
+}
+
+.logo {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    right: 5px;
+    text-align: left;
+    max-width: 200px;
+}
+
+.no-access-container {
+    padding: 16px;
+    text-align: center;
+}
+
+.header {
+    padding: 5px;
+}
+
+#mtz-container {
+    position: static;
+    text-align: left;
+    background: white;
+    color: black;
+    top: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 12px;
+}
+
+.mtz-text {
+    display: inline-block;
+    position: absolute;
+    color: white;
+    top: 7px;
+    text-align: center;
+    padding-left: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  #mtz-container {
+      background: #3D3B3B;
+      color: #d1dae4;
+      text-align: center;
+  }
+}
+@media (prefers-color-scheme: light) {
+  #mtz-container {
+      background: #3f454f;
+      color: #bcc7d1;
+      text-align: center;
+  }
+
+  .has-not-access {
+      overflow: hidden;
+      color: #111111;
+      background: #2d323a;
+  }
+
+  .mtz-text {
+      display: inline-block;
+      position: absolute;
+      color: #ffffff;
+      top: 5px;
+      text-align: center;
+
+  }
+}
