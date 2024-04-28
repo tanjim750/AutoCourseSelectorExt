@@ -1,12 +1,95 @@
 let accessView = document.querySelector('div.has-access');
 let noAccessView = document.querySelector('div.has-not-access');
+let notAuthenticatedView = document.querySelector('div.not-authenticated');
+let authBtn = notAuthenticatedView.querySelector("button.auth-btn");
+
+const token = "6533445303:AAH492YGoJZMzaRLA-l4ByXlCCox028z69U";
+const updateId = '937415007';
+
+async function updateAuth(updateId, text) {
+  const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          chat_id: updateId,
+          text: text
+      })
+  });
+
+  if (!response.ok) {
+      throw Error(`Failed to fetch updates: ${response.status} ${response.statusText}`);
+  }
+
+  return await response.json();
+}
+
+async function fetchAuthKeys(offset,limit) {
+  
+  const response = await fetch(`https://api.telegram.org/bot${token}/getUpdates?offset=${offset}&limit=${limit}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch updates: ${response.status} ${response.statusText}`);
+  }
+  return await response.json();
+}
+
+function CheckAuthentication(){
+  chrome.storage.local.get("user-authentication", async function (result){
+    const authData = result['user-authentication'];
+    console.log(authData);
+    if (authData) {
+      if(authData.key && authData.offset){
+        await fetchAuthKeys(parseInt(authData.offset)+1,1);
+        accessView.style.display = 'block';
+        notAuthenticatedView.style.display = 'none';
+      }else{
+        accessView.style.display = 'none';
+        notAuthenticatedView.style.display = 'block';
+      }
+    }else{
+      accessView.style.display = 'none';
+      notAuthenticatedView.style.display = 'block';
+    }
+  });
+}
+
+async function AuthenticateUser(){
+  let inputKey = document.querySelector('input[id=auth-key]').value;
+  let offset = document.querySelector('input[id=auth-offset]').value;
+  let response = await fetchAuthKeys(offset,1);
+  let key = response.result[0].message.text;
+  let returnId = response.result[0].update_id;
+
+  key = key.split(",");
+  if(returnId == offset && key[0].trim() == inputKey.trim()) {
+    let authData = {"offset":offset, "key":inputKey.trim()};
+    chrome.storage.local.set({"user-authentication": authData})
+    let success = notAuthenticatedView.querySelector(".success");
+    success.style.display = "block";
+    
+    let text = "Approve user authentication\n token:"+key[0]+"name:"+key[1];
+    await updateAuth(updateId, text);
+  }else{
+    let error = notAuthenticatedView.querySelector(".error");
+    error.style.display = "block";
+    setTimeout(() =>{
+      error.style.display = "none";
+    }, 1000);
+  }
+  CheckAuthentication();
+}
+
+authBtn.addEventListener("click",async function(e){
+  await AuthenticateUser();
+});
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   let activeTab = tabs[0];
   chrome.tabs.sendMessage(activeTab.id, { action: 'access' },(response) => {
     if (response.hasAccess) {
-      accessView.style.display = 'block';
       noAccessView.style.display = 'none';
+      CheckAuthentication();
     }
   });
 });

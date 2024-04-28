@@ -8,10 +8,26 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-slate-100">
+  <div class="not-authenticated">
+    <div class="header">
+        <img src="img/image-128.png" alt="seu" class="logo">
+        <b class="mtz-text"> Seu Auto Advisor</b>
+    </div>
+    
+    <div id="mtz-container" class="no-access-container">
+        <span id="mtz-text">Please get your access code and authenticate yourself.</span><br><br>
+        <input type="text" name="" id="auth-offset" placeholder="  Enter Your username" style="width: 90%; margin-bottom: 10px; color:black">
+        <input type="text" name="" id="auth-key" placeholder="  Enter Your key" style="width: 90%; color:black"><br><br>
+        <p class="error" style="color:red; display: none;">Wrong key or already used.</p><br>
+        <p class="success" style="color:green; display: none;">Success!! Please wait for approval.</p><br>
+        <button class="auth-btn">Get Access</button>
+    </div>
+  </div>
+
   <div class="has-not-access">
     <div class="header">
         <img src="img/image-128.png" alt="seu" class="logo">
-        <h3 class="mtz-text"> Seu Auto Advisor for Chrome</h3>
+        <b class="mtz-text"> Seu Auto Advisor</b>
     </div>
     
     <div id="mtz-container" class="no-access-container">

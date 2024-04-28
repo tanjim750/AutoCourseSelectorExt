@@ -11,6 +11,12 @@
       "js": ["content.js"]
     }
   ],
+  "icons": {
+    "16": "img/image-16.png",
+    "48": "img/image-48.png",
+    "64": "img/image-64.png",
+    "128": "img/image-128.png"
+  },
   "action": {
     "default_icon": {
       "16": "img/image-16.png",
