@@ -1,13 +1,13 @@
-const url = window.location.href;
+var url = window.location.href;
 let inputEvent = new Event('input', { bubbles: true });
 
 function getTimer(){
   let timeLimit = 1;
 
-  const days = document.querySelector('.days');
-  const hours = document.querySelector('.hours');
-  const minutes = document.querySelector('.minutes');
-  const seconds = document.querySelector('.seconds');
+  var days = document.querySelector('.days');
+  var hours = document.querySelector('.hours');
+  var minutes = document.querySelector('.minutes');
+  var seconds = document.querySelector('.seconds');
 
   if(days){
     days = parseInt(days.textContent);
@@ -124,15 +124,15 @@ function reload(){
 
 function selectMyCourse(courseList){
 
-  // const courseList = ["ACT141.24","ACT141.26","CSE161.3"]
-  const resultList = [];
+  // var courseList = ["ACT141.24","ACT141.26","CSE161.3"]
+  var resultList = [];
 
   function main(){
-    //const courseText = "ACT141.24"; // The text associated with the checkbox
+    //var courseText = "ACT141.24"; // The text associated with the checkbox
     // Find all checkboxes
     console.log(`main function running. Total ${courseList.length} courses to select`);
-    const searchBox =  document.querySelector('input#mat-input-0')
-    const totalCourses = courseList.length;
+    var searchBox =  document.querySelector('input#mat-input-0')
+    var totalCourses = courseList.length;
 
     function select(start,end){
       if(start < end){
@@ -140,7 +140,7 @@ function selectMyCourse(courseList){
         searchBox.value = courseText;
         searchBox.dispatchEvent(inputEvent);
 
-        const courseCheckbox = document.querySelector('mat-checkbox input[type="checkbox"]');
+        var courseCheckbox = document.querySelector('mat-checkbox input[type="checkbox"]');
         if(courseCheckbox !== null){
           if(!courseCheckbox.checked){
             courseCheckbox.click();
@@ -215,7 +215,7 @@ function selectMyCourse(courseList){
 
 // swap courses script starts here 
 function swapMyCourse(selectedCourseList,swapCourseList){
-    const resultList = [];
+    var resultList = [];
 
     function checkLoaded(){
       let notifier = document.querySelector('notifier-container ul li');
@@ -227,32 +227,32 @@ function swapMyCourse(selectedCourseList,swapCourseList){
     }
 
     function main(){
-      //const courseText = "ACT141.24"; // The text associated with the checkbox
+      //var courseText = "ACT141.24"; // The text associated with the checkbox
       // Find all checkboxes
-      const checkboxes = document.querySelectorAll('mat-checkbox input[type="checkbox"]');
-      const checkboxesLength = checkboxes.length;
+      var checkboxes = document.querySelectorAll('mat-checkbox input[type="checkbox"]');
+      var checkboxesLength = checkboxes.length;
       var selectedCourseCheckbox = null;
       var swapCourseCheckbox = null;
       console.log(`main function running. array length ${checkboxesLength}`);
       if(checkboxesLength>0){
         for(var i=0; i<swapCourseList.length; i++){
-          const swapCourseText = swapCourseList[i];
-          const selectedCourseText = selectedCourseList[i];
+          var swapCourseText = swapCourseList[i];
+          var selectedCourseText = selectedCourseList[i];
           var swapCourseSeatAbailable = false;
-          for (const checkbox of checkboxes) {
-            const parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
+          for (var checkbox of checkboxes) {
+            var parentDiv = checkbox.closest('.bg-card'); // Select the parent div with class "bg-card"
             // if(parentDiv){action.textContent= "True"}else{action.textContent= "False"}
             if (parentDiv){
-              const seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden'); 
+              var seatLimitElement = parentDiv.querySelector('div.block.lg\\:hidden'); 
               // console.log("seatLimitElement");
               // console.log(seatLimitElement);
               var seatLimit = null;
               if(seatLimitElement){
                  seatLimit = seatLimitElement.textContent.trim().split("/");
               }else{ seatLimit = [20,23];}
-              const tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
+              var tooltipTriggerDiv = parentDiv.querySelector('div.mat-mdc-tooltip-trigger');
               if(tooltipTriggerDiv){
-                  const weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
+                  var weAreWatchingYouA = tooltipTriggerDiv.querySelector('we-are-watching-you');
                   if(weAreWatchingYouA){
                       if(weAreWatchingYouA.textContent.trim().toUpperCase() === swapCourseText.trim().toUpperCase()){
                         if(parseInt(seatLimit[0])< parseInt(seatLimit[1])){
@@ -347,7 +347,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       // Do something in response to the message
       console.log('Message received in content.js');
       chrome.storage.local.get("select-course", function (result) {
-          const courseList = result['select-course'];
+          var courseList = result['select-course'];
           console.log(result);
           if (courseList) {
             selectMyCourse(courseList)
@@ -356,7 +356,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }else if (request.action === 'swap-course'){
     console.log('Message received in content.js');
     chrome.storage.local.get("swap-course", function (result) {
-      const swapCourse = result['swap-course'];
+      var swapCourse = result['swap-course'];
       console.log(result);
       if (swapCourse) {
           let selectedCourseList = swapCourse.selectedCourseList;
