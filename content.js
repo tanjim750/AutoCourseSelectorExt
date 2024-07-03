@@ -115,12 +115,7 @@ function contentLoaded(){
   }
 }
 
-function reload(){
-    let menues = document.querySelectorAll('fuse-vertical-navigation-basic-item');
-    menues[1].querySelector('a').click(); 
-    setTimeout(function(){menues[2].querySelector('a').click();},2000)
-    setTimeout(getStart,3000)
-}
+
 
 function selectMyCourse(courseList){
 
@@ -139,6 +134,7 @@ function selectMyCourse(courseList){
         let courseText = courseList[start];
         searchBox.value = courseText;
         searchBox.dispatchEvent(inputEvent);
+        setTimeout(function(){},300) // wait for 0.3 second
 
         var courseCheckbox = document.querySelector('mat-checkbox input[type="checkbox"]');
         if(courseCheckbox !== null){
@@ -171,7 +167,7 @@ function selectMyCourse(courseList){
 
         // run recursive search
         start++;
-        loop(start,end);
+        select(start,end);
       }else if( end == start ){
         fuseAlart(resultList);
         return
@@ -184,6 +180,7 @@ function selectMyCourse(courseList){
       setTimeout(main,1000);
     }
   }
+
   // main function end 
   function getStart(){
     let content_loaded = contentLoaded();
@@ -198,7 +195,8 @@ function selectMyCourse(courseList){
       console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
       
       if (timeLimit > 60*2.5){
-        setTimeout(reload,(timeLimit-60*1.5)*1000);
+        // setTimeout(reload,(60*1.5)*1000);
+        setTimeout(reload,10000);
       }else{
         // fuseAlart([{message:`The course CSE241.13 already selected`,color:"#d92121"},{message:`CSE242.12 course was successfully selected`,color:"#56bf5f"},{message:`The course CSE282.12 was not found`,color:"#56bf5f"}]);
         setTimeout(main,(timeLimit)*1000);
@@ -207,6 +205,13 @@ function selectMyCourse(courseList){
       fuseAlart([{message:"Your advising start time is not yet declared",color:"#d92121"}]);
     }
     
+  }
+
+  function reload(){
+    let menues = document.querySelectorAll('fuse-vertical-navigation-basic-item');
+    menues[1].querySelector('a').click(); 
+    setTimeout(function(){menues[2].querySelector('a').click();},2000)
+    setTimeout(getStart,3000)
   }
 
   getStart()
