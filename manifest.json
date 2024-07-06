@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Auto Advisor",
   "description": "The Automatic Course Selector Bot streamlines and automates the complex process of selecting courses, allowing students to make the most of their limited registration window",
-  "version": "1.3.5",
+  "version": "1.4.5",
   "host_permissions": ["*://ums.seu.edu.bd/*"],
   "permissions": ["activeTab","storage","tabs"],
   "content_scripts": [
