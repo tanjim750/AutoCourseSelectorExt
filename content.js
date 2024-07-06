@@ -115,12 +115,41 @@ function contentLoaded(){
   }
 }
 
+function recheckCourses(courseList){
+  var resultList = [];
+  var searchBox =  document.querySelector('input#mat-input-0')
+  var totalCourses = courseList.length;
+
+  courseList.forEach(course => {
+    searchBox.value = course;
+    searchBox.dispatchEvent(inputEvent);
+    setTimeout(function(){},300) // wait for 0.3 second
+
+    var courseCheckbox = document.querySelector('mat-checkbox input[type="checkbox"]');
+
+    if(courseCheckbox !== null){
+      if(courseCheckbox.checked){
+        var alart = {message:`The course ${courseText} is selected`,color:"#56bf5f"}
+        resultList.push(alart);
+      }else if(!courseCheckbox.checked) {
+        var alart = {message:`The course ${courseText} can't be selected`,color:"#d92121"}
+        resultList.push(alart);
+      }
+
+    }else{
+      var alart = {message:`The course ${courseText} is not found`,color:"#d92121"}
+      resultList.push(alart);
+    }
+  });
+
+}
 
 
 function selectMyCourse(courseList){
 
   // var courseList = ["ACT141.24","ACT141.26","CSE161.3"]
   var resultList = [];
+  
 
   function main(){
     //var courseText = "ACT141.24"; // The text associated with the checkbox
@@ -137,9 +166,12 @@ function selectMyCourse(courseList){
         setTimeout(function(){},300) // wait for 0.3 second
 
         var courseCheckbox = document.querySelector('mat-checkbox input[type="checkbox"]');
+        console.log(courseCheckbox);
         if(courseCheckbox !== null){
           if(!courseCheckbox.checked){
             courseCheckbox.click();
+            console.log('courseCheckbox clicked');
+            setTimeout(function(){},300) // wait for 0.3 second
             
             function checkLoaded(){
               let notifier = document.querySelector('notifier-container ul li');
@@ -151,10 +183,15 @@ function selectMyCourse(courseList){
             }
 
             var alartText = checkLoaded();
-            var alart = {message:alartText,color:"#56bf5f"}
-            resultList.push(alart);
+            if(courseCheckbox.checked){
+              var alart = {message:`The course ${courseText} is selected`,color:"#56bf5f"}
+              resultList.push(alart);
+            }else{
+              var alart = {message:`The course ${courseText} can't be selected`,color:"#d92121"}
+              resultList.push(alart);
+            }
           }else{
-            var alart = {message:`The course ${courseText} already selected`,color:"#d92121"}
+            var alart = {message:`The course ${courseText} already selected`,color:"#56bf5f"}
             resultList.push(alart);
             fuseAlart([alart]);
           }
@@ -169,7 +206,8 @@ function selectMyCourse(courseList){
         start++;
         select(start,end);
       }else if( end == start ){
-        fuseAlart(resultList);
+        console.log("all results",resultList);
+        fuseAlart(resultList,60*1000);
         return
       }
     }
@@ -187,22 +225,33 @@ function selectMyCourse(courseList){
     let timeLimit = getTimer(); // returns time limit in seconds
 
     let umsHeader = document.querySelector(".fuse-alert-container");
-    let hedaerText = 'Info: Your advising start time is not yet declared. For more information contact your coordinator.';
+    let headerText = 'Info: Your advising start time is not yet declared. For more information contact your coordinator.';
+    let headerText2 = 'Info: Your advising will start on';
     // umsHeader.textContent = "he ewbj"/
-    if(umsHeader.textContent.trim() != hedaerText){
-      fuseAlart([{message:"Please wait until the timer ends.",color:"#56bf5f"}])
-      // if(umsHeader){umsHeader.innerHTML = "<b style='color:#5d3bf5;'> Please wait until the timer ends.</b>";}
-      console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
-      
-      if (timeLimit > 60*2.5){
-        // setTimeout(reload,(60*1.5)*1000);
-        setTimeout(reload,10000);
+
+    if(umsHeader != null) {
+      if(umsHeader.textContent.trim() == headerText){
+        fuseAlart([{message:"Your advising start time is not yet declared",color:"#d92121"}]);
+  
+      }else if(umsHeader.textContent.trim().startsWith(headerText2)){
+        fuseAlart([{message:"Please wait until the timer ends.",color:"#56bf5f"}])
+        console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
+        
+        if (timeLimit > 60*2.5){
+          setTimeout(reload,(60*1.5)*1000);
+          // setTimeout(reload,10000);
+        }else{
+          // fuseAlart([{message:`The course CSE241.13 already selected`,color:"#d92121"},{message:`CSE242.12 course was successfully selected`,color:"#56bf5f"},{message:`The course CSE282.12 was not found`,color:"#56bf5f"}]);
+          setTimeout(main,(timeLimit)*1000);
+        }
+  
       }else{
-        // fuseAlart([{message:`The course CSE241.13 already selected`,color:"#d92121"},{message:`CSE242.12 course was successfully selected`,color:"#56bf5f"},{message:`The course CSE282.12 was not found`,color:"#56bf5f"}]);
-        setTimeout(main,(timeLimit)*1000);
+        fuseAlart([{message:"Your advising alraedy started",color:"#56bf5f"}])
+        setTimeout(main,500);
       }
     }else{
-      fuseAlart([{message:"Your advising start time is not yet declared",color:"#d92121"}]);
+      fuseAlart([{message:"Your advising alraedy started",color:"#56bf5f"}])
+      setTimeout(main,500);
     }
     
   }
@@ -323,9 +372,9 @@ function swapMyCourse(selectedCourseList,swapCourseList){
       let timeLimit = getTimer(); // returns time limit in seconds
   
       let umsHeader = document.querySelector(".fuse-alert-container");
-      let hedaerText = 'Info: Your advising start time is not yet declared. For more information contact your coordinator.';
+      let headerText = 'Info: Your advising start time is not yet declared. For more information contact your coordinator.';
       // umsHeader.textContent = "he ewbj"/
-      if(umsHeader.textContent.trim() != hedaerText){
+      if(umsHeader.textContent.trim() != headerText){
         fuseAlart([{message:"Please wait until the timer ends.",color:"#56bf5f"}])
         // if(umsHeader){umsHeader.innerHTML = "<b style='color:#5d3bf5;'> Please wait until the timer ends.</b>";}
         console.log(`Time Limit in seconds: ${timeLimit} and Time Limit in miliseconds: ${timeLimit*1000}`);
